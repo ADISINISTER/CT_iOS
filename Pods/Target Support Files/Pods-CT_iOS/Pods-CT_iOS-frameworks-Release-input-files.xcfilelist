@@ -1,0 +1,9 @@
+${PODS_ROOT}/Target Support Files/Pods-CT_iOS/Pods-CT_iOS-frameworks.sh
+${BUILT_PRODUCTS_DIR}/CleverTap-Geofence-SDK/CleverTapGeofence.framework
+${BUILT_PRODUCTS_DIR}/CleverTap-iOS-SDK/CleverTapSDK.framework
+${BUILT_PRODUCTS_DIR}/CleverTapLocation/CleverTapLocation.framework
+${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework
+${BUILT_PRODUCTS_DIR}/mParticle-Apple-SDK/mParticle_Apple_SDK.framework
+${BUILT_PRODUCTS_DIR}/mParticle-CleverTap/mParticle_CleverTap.framework
+${BUILT_PRODUCTS_DIR}/CTNotificationService/CTNotificationService.framework
+${BUILT_PRODUCTS_DIR}/CTNotificationContent/CTNotificationContent.framework

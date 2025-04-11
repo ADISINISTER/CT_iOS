@@ -1,0 +1,6 @@
+framework module Pods_CT_iOS_Notification_Service {
+  umbrella header "Pods-CT_iOS-Notification_Service-umbrella.h"
+
+  export *
+  module * { export * }
+}

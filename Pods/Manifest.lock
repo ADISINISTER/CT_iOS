@@ -1,0 +1,48 @@
+PODS:
+  - CleverTap-Geofence-SDK (1.0.6):
+    - CleverTap-iOS-SDK (>= 3.9)
+  - CleverTap-iOS-SDK (7.1.0):
+    - SDWebImage (~> 5.11)
+  - CleverTapLocation (6.2.1)
+  - CTNotificationContent (0.2.7)
+  - CTNotificationService (0.1.7)
+  - mParticle-Apple-SDK/mParticle (8.28.1)
+  - mParticle-CleverTap (8.6.0):
+    - CleverTap-iOS-SDK (~> 7.0)
+    - mParticle-Apple-SDK/mParticle (~> 8.22)
+  - SDWebImage (5.20.0):
+    - SDWebImage/Core (= 5.20.0)
+  - SDWebImage/Core (5.20.0)
+
+DEPENDENCIES:
+  - CleverTap-Geofence-SDK
+  - CleverTap-iOS-SDK
+  - CleverTapLocation
+  - CTNotificationContent
+  - CTNotificationService
+  - mParticle-CleverTap
+
+SPEC REPOS:
+  trunk:
+    - CleverTap-Geofence-SDK
+    - CleverTap-iOS-SDK
+    - CleverTapLocation
+    - CTNotificationContent
+    - CTNotificationService
+    - mParticle-Apple-SDK
+    - mParticle-CleverTap
+    - SDWebImage
+
+SPEC CHECKSUMS:
+  CleverTap-Geofence-SDK: 980ab1d94b0f7e45090fd60f0e3dce24553d419c
+  CleverTap-iOS-SDK: 571ced90fc6378635db504f9767c62858e2c5286
+  CleverTapLocation: ab113277bcd75164e5bca7404b32314535004987
+  CTNotificationContent: 149ec0d68884bf26ef0c045199f6a4e1b5a22dfd
+  CTNotificationService: 3eceea27cf0e28a2e14267bb706013363eb620c6
+  mParticle-Apple-SDK: 19348db902767412767dea737b3be9029709cca7
+  mParticle-CleverTap: c6b891a44e5104be86688fe73246e5bf9340f125
+  SDWebImage: 73c6079366fea25fa4bb9640d5fb58f0893facd8
+
+PODFILE CHECKSUM: 7e43e0e81172391d41f9a050ab047dbf9d08d7d7
+
+COCOAPODS: 1.16.2

@@ -7,7 +7,35 @@
 		<key>CT_iOS.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
+			<integer>17</integer>
+		</dict>
+		<key>Notification_Content.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>Notification_Service.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>AA37B8092D5A46F800967606</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>AA6931542D5E048900A98A23</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>AA69319B2D5E347400A98A23</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

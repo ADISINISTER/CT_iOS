@@ -1,0 +1,6 @@
+framework module CleverTapLocation {
+  umbrella header "CleverTapLocation-umbrella.h"
+
+  export *
+  module * { export * }
+}
