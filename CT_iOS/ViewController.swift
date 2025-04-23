@@ -19,12 +19,21 @@ class ViewController: UIViewController, CleverTapInboxViewControllerDelegate,  C
         super.viewDidLoad()
         setupButtons()
         // Set delegate to receive display unit updates
+        
                 CleverTap.sharedInstance()?.setDisplayUnitDelegate(self)
+        
+//        UNUserNotificationCenter.current().getNotificationSettings { settings in
+//                    if settings.authorizationStatus == .notDetermined {
+//                        DispatchQueue.main.async {
+//                            self.showPushPrimer()
+//                        }
+//                    }
+//                }
     }
     
     // MARK: - Button Setup
     func setupButtons() {
-        addButton(title: "Reset CleverTap", yPosition: 100, color: .systemRed, action: #selector(resetCleverTapInstance))
+//      --------  addButton(title: "Reset CleverTap", yPosition: 100, color: .systemRed, action: #selector(resetCleverTapInstance))
         addButton(title: "Push Notification Event", yPosition: 170, action: #selector(recordPushEvent))
         addButton(title: "In-App Event", yPosition: 240, action: #selector(recordInAppEvent))
         addButton(title: "Charged Event", yPosition: 310, action: #selector(recordChargedEvent))
@@ -50,35 +59,35 @@ class ViewController: UIViewController, CleverTapInboxViewControllerDelegate,  C
     
     
     // MARK: - Button Actions
-    
-    @objc func resetCleverTapInstance() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.sound, .alert, .badge]) { granted, _ in
-            if granted {
-                DispatchQueue.main.async {
-                    UIApplication.shared.unregisterForRemoteNotifications()
-                }
-            }
-        }
-        
-        if let accId = CleverTap.sharedInstance()?.config.accountId {
-            let fileName = "clevertap-\(accId)-userprofile.plist"
-            let appDir = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).last
-            let filePath = "\(appDir!)/\(fileName)"
-            if FileManager.default.fileExists(atPath: filePath) {
-                try? FileManager.default.removeItem(atPath: filePath)
-            }
-            
-            let defaults = UserDefaults.standard
-            for (key, _) in defaults.dictionaryRepresentation() where key.contains("WizRocket") {
-                if key != "WizRocketdevice_token" && key != "WizRocketfirstTime" {
-                    defaults.removeObject(forKey: key)
-                }
-            }
-            defaults.synchronize()
-        }
-        
-        (UIApplication.shared.delegate as? AppDelegate)?.registerForPush()
-    }
+    // change here after Provisonal push
+//    @objc func resetCleverTapInstance() {
+//        UNUserNotificationCenter.current().requestAuthorization(options: [.sound, .alert, .badge]) { granted, _ in
+//            if granted {
+//                DispatchQueue.main.async {
+//                    UIApplication.shared.unregisterForRemoteNotifications()
+//                }
+//            }
+//        }
+//        
+//        if let accId = CleverTap.sharedInstance()?.config.accountId {
+//            let fileName = "clevertap-\(accId)-userprofile.plist"
+//            let appDir = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).last
+//            let filePath = "\(appDir!)/\(fileName)"
+//            if FileManager.default.fileExists(atPath: filePath) {
+//                try? FileManager.default.removeItem(atPath: filePath)
+//            }
+//            
+//            let defaults = UserDefaults.standard
+//            for (key, _) in defaults.dictionaryRepresentation() where key.contains("WizRocket") {
+//                if key != "WizRocketdevice_token" && key != "WizRocketfirstTime" {
+//                    defaults.removeObject(forKey: key)
+//                }
+//            }
+//            defaults.synchronize()
+//        }
+//        
+//        (UIApplication.shared.delegate as? AppDelegate)?.registerForPush()
+//    }
     
     @objc func recordPushEvent() {
         CleverTap.sharedInstance()?.recordEvent("Push Notification")
@@ -105,19 +114,19 @@ class ViewController: UIViewController, CleverTapInboxViewControllerDelegate,  C
     @objc func onUserLoginWithProfile() {
         let dob = DateComponents(calendar: .current, year: 1992, month: 5, day: 24).date!
         let profile: [String: AnyObject] = [
-            "Name": "Aditya Raj Sinha" as AnyObject,
-            "Identity": 8275 as AnyObject,
-            "Email": "addy3503@gmail.com" as AnyObject,
-            "Phone": "+9135878442" as AnyObject,
-            "Gender": "M" as AnyObject,
+            "Name": "Bajaj" as AnyObject,
+            "Identity": 2303 as AnyObject,
+            "Email": "bajaj3503@gmail.com" as AnyObject,
+            "Phone": "+9135878000" as AnyObject,
+            "Gender": "F" as AnyObject,
             "DOB": dob as AnyObject,
             "Age": 28 as AnyObject,
             "Photo": "https://avatar.iran.liara.run/public/boy?username=Ash" as AnyObject,
-            "MSG-email": false as AnyObject,
-            "MSG-push": true as AnyObject,
-            "MSG-sms": false as AnyObject,
-            "MSG-dndPhone": true as AnyObject,
-            "MSG-dndEmail": true as AnyObject
+//            "MSG-email": false as AnyObject,
+//            "MSG-push": true as AnyObject,
+//            "MSG-sms": false as AnyObject,
+//            "MSG-dndPhone": true as AnyObject,
+//            "MSG-dndEmail": true as AnyObject
         ]
         CleverTap.sharedInstance()?.onUserLogin(profile)
     }

@@ -13,7 +13,9 @@ import UserNotifications
 import CleverTapGeofence
 import mParticle_Apple_SDK
 
+
 @main
+
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, CleverTapURLDelegate {
     
     var webView: WKWebView?
@@ -21,17 +23,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         // Push Notification Registration
-        registerForPush()
+/*    -------*/   /* registerForPush()*/
+        
+        
         
         // CleverTap Initialization
         CleverTap.autoIntegrate()
         CleverTap.setDebugLevel(CleverTapLogLevel.debug.rawValue)
         CleverTap.sharedInstance()?.setUrlDelegate(self)
+    
+////Push Primer
+//
+//        let localInAppBuilder = CTLocalInApp(inAppType: .ALERT,
+//                                             titleText: "Get Notified",
+//                                             messageText: "Enable Notification permission",
+//                                             followDeviceOrientation: true,
+//                                             positiveBtnText: "Allow",
+//                                             negativeBtnText: "Cancel")
+//
+//        // Optional fields.
+//        localInAppBuilder.setFallbackToSettings(true)
+//
+//        // Prompt Push Primer with above settings.
+//        CleverTap.sharedInstance()?.promptPushPrimer(localInAppBuilder.getSettings())
         
-        // Geofence SDK Init
+    // Geofence SDK Init
         CleverTapGeofence.monitor.start(didFinishLaunchingWithOptions: launchOptions)
         
-        // Location Permissions
+    // Location Permissions
         let locationManager = CLLocationManager()
         locationManager.requestAlwaysAuthorization()
         locationManager.requestWhenInUseAuthorization()
@@ -44,7 +63,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         let action1 = UNNotificationAction(identifier: "action_1", title: "Back", options: [])
         let category = UNNotificationCategory(identifier: "CTNotification", actions: [action1], intentIdentifiers: [], options: [])
         UNUserNotificationCenter.current().setNotificationCategories([category])
-
+        
+        PushManager.shared.updatePushCategory()
+        PushManager.shared.requestProvisionalPushAuthorization()
+        
         return true
     }
 
@@ -53,18 +75,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         print("Handling CleverTap URL: \(url?.absoluteString ?? "") for channel: \(channel)")
         return true
     }
-
+//--------change here
     // MARK: - Push Notification Setup
-    func registerForPush() {
-        UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().requestAuthorization(options: [.sound, .badge, .alert]) { granted, _ in
-            if granted {
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-            }
-        }
-    }
+//    func registerForPush() {
+//        UNUserNotificationCenter.current().delegate = self
+//        UNUserNotificationCenter.current().requestAuthorization(options: [.sound, .badge, .alert]) { granted, _ in
+//            if granted {
+//                DispatchQueue.main.async {
+//                    UIApplication.shared.registerForRemoteNotifications()
+//                }
+//            }
+//        }
+//    }
     // Called when the app fails to register for remote (push) notifications
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         NSLog("Failed to register for remote notifications: %@", error.localizedDescription)
@@ -107,6 +129,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         NSLog("Received background push notification: %@", userInfo)
         completionHandler(.noData)
+    }
+    // MARK: - CleverTap Push Notification Delegate
+
+//    func pushNotificationTapped(withCustomExtras customExtras: [AnyHashable : Any]!) {
+//            print("Push Notification Tapped with Custom Extras: \(customExtras ?? [:])")
+//            
+//            // Example: Handle navigation based on custom extras
+//            if let screen = customExtras["navigateTo"] as? String {
+//                print("Navigate to screen: \(screen)")
+//                // You can post a NotificationCenter event or call a coordinator to handle navigation
+//        }
+//    }
+
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        PushManager.shared.updatePushCategory()
+        
     }
 }
 
