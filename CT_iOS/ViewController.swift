@@ -11,6 +11,7 @@ import UserNotifications
 
 class ViewController: UIViewController, CleverTapInboxViewControllerDelegate,  CleverTapDisplayUnitDelegate{
     @IBOutlet weak var nativeDisplayImageView: UIImageView!
+    @IBOutlet weak var pushImpression: UIButton!
     var imageUrls: [String] = []
         var currentIndex = 0
         var timer: Timer?
@@ -89,6 +90,9 @@ class ViewController: UIViewController, CleverTapInboxViewControllerDelegate,  C
 //        (UIApplication.shared.delegate as? AppDelegate)?.registerForPush()
 //    }
     
+    @IBAction func Pushimpressionrecord(_ sender: Any) {
+        CleverTap.sharedInstance()?.recordEvent("Push Impression Record")
+    }
     @objc func recordPushEvent() {
         CleverTap.sharedInstance()?.recordEvent("Push Notification")
     }

@@ -16,14 +16,17 @@ import mParticle_Apple_SDK
 
 @main
 
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, CleverTapURLDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, /*UNUserNotificationCenterDelegate, */ CleverTapURLDelegate {
     
     var webView: WKWebView?
+    
+    // Flag to check if the dialog has been shown
+        private let hasSeenPushPermissionDialogKey = "hasSeenPushPermissionDialog"
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         // Push Notification Registration
-/*    -------*/   /* registerForPush()*/
+/*    -------*/    /*registerForPush()*/
         
         
         
@@ -47,10 +50,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 //        // Prompt Push Primer with above settings.
 //        CleverTap.sharedInstance()?.promptPushPrimer(localInAppBuilder.getSettings())
         
-    // Geofence SDK Init
+    // Geofence SDK Init ---------UNCOMMENT THIS
         CleverTapGeofence.monitor.start(didFinishLaunchingWithOptions: launchOptions)
         
-    // Location Permissions
+    // Location Permissions ---------UNCOMMENT THIS
         let locationManager = CLLocationManager()
         locationManager.requestAlwaysAuthorization()
         locationManager.requestWhenInUseAuthorization()
@@ -64,18 +67,72 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         let category = UNNotificationCategory(identifier: "CTNotification", actions: [action1], intentIdentifiers: [], options: [])
         UNUserNotificationCenter.current().setNotificationCategories([category])
         
-        PushManager.shared.updatePushCategory()
-        PushManager.shared.requestProvisionalPushAuthorization()
+        UNUserNotificationCenter.current().delegate = PushManager.shared  //?? understand this why its here???
+        PushManager.shared.registerForPushNotifications() //changed here check
+        
+        // Only show the dialog once
+               if !UserDefaults.standard.bool(forKey: hasSeenPushPermissionDialogKey) {
+                   DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                       self.showPushPermissionDialog(from: application)
+                   }
+               }
+        
+//        PushManager.shared.requestStandardPushAuthorization()
+//        PushManager.shared.requestProvisionalPushAuthorization()
+
+
         
         return true
     }
+    
+    //-------
+    // MARK: - Show Custom Push Permission Dialog
+       func showPushPermissionDialog(from application: UIApplication) {
+           guard let window = application.windows.first else { return }
+           
+           // Ensure we get the root view controller
+           guard let rootViewController = window.rootViewController else { return }
+           
+           // Create and present the alert
+           let alertController = UIAlertController(title: "Enable Notifications",
+                                                   message: "Choose how you want to receive notifications.",
+                                                   preferredStyle: .alert)
+           
+           let allowAction = UIAlertAction(title: "Standard Allow", style: .default) { _ in
+               PushManager.shared.requestStandardPushAuthorization()
+           }
+           
+           let provisionalAllowAction = UIAlertAction(title: "Provisional Allow", style: .default) { _ in
+               PushManager.shared.requestProvisionalPushAuthorization()
+           }
+           
+//           let dontAllowAction = UIAlertAction(title: "Don't Allow", style: .destructive) { _ in
+//               print("User chose to deny push notifications.")
+//           }
+           
+           alertController.addAction(allowAction)
+           alertController.addAction(provisionalAllowAction)
+//           alertController.addAction(dontAllowAction)
+
+           // Present the alert on the root view controller
+           rootViewController.present(alertController, animated: true, completion: nil)
+
+           // Mark the dialog as shown so it doesn't show again
+           UserDefaults.standard.set(true, forKey: hasSeenPushPermissionDialogKey)
+       }
+
 
     // MARK: - CleverTapURLDelegate
     public func shouldHandleCleverTap(_ url: URL?, for channel: CleverTapChannel) -> Bool {
         print("Handling CleverTap URL: \(url?.absoluteString ?? "") for channel: \(channel)")
         return true
     }
-//--------change here
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        PushManager.shared.updatePushCategory()
+        
+    }
+      //--------change here
     // MARK: - Push Notification Setup
 //    func registerForPush() {
 //        UNUserNotificationCenter.current().delegate = self
@@ -87,49 +144,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 //            }
 //        }
 //    }
-    // Called when the app fails to register for remote (push) notifications
-    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        NSLog("Failed to register for remote notifications: %@", error.localizedDescription)
-    }
-    // Called when the app successfully registers for remote notifications and receives a device token
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        NSLog("Registered for remote notifications: %@", deviceToken.description)
-    }
-
-    // Called when the user taps on a push notification while the app is in the background or terminated
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void) {
-        // Logs the notification payload
-        NSLog("Push notification tapped: %@", response.notification.request.content.userInfo)
-        
-        // Informs CleverTap that the notification was tapped (for engagement tracking)
-        CleverTap.sharedInstance()?.handleNotification(withData: response.notification.request.content.userInfo)
-        
-        // Must call the completion handler
-        completionHandler()
-    }
-
-    // Called when a push notification is received while the app is in the foreground
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                willPresent notification: UNNotification,
-                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // Logs the notification payload received in foreground
-        NSLog("Push received while app is in foreground: %@", notification.request.content.userInfo)
-        
-        // Informs CleverTap that the notification was viewed (only works when app is in foreground)
-        CleverTap.sharedInstance()?.recordNotificationViewedEvent(withData: notification.request.content.userInfo)
-        
-        // Tells iOS to present the notification with alert, sound, and badge even in foreground
-        completionHandler([.badge, .sound, .alert])
-    }
-    // Called when a remote push notification is received in the background (silent push or content-available)
-    func application(_ application: UIApplication,
-                     didReceiveRemoteNotification userInfo: [AnyHashable : Any],
-                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        NSLog("Received background push notification: %@", userInfo)
-        completionHandler(.noData)
-    }
+    //--------------------- Below handling code is transfered to pushmanager
+//    // Called when the app fails to register for remote (push) notifications
+//    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+//        NSLog("Failed to register for remote notifications: %@", error.localizedDescription)
+//    }
+//    // Called when the app successfully registers for remote notifications and receives a device token
+//    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+//        NSLog("Registered for remote notifications: %@", deviceToken.description)
+//    }
+//
+//    // Called when the user taps on a push notification while the app is in the background or terminated
+//    func userNotificationCenter(_ center: UNUserNotificationCenter,
+//                                didReceive response: UNNotificationResponse,
+//                                withCompletionHandler completionHandler: @escaping () -> Void) {
+//        // Logs the notification payload
+//        NSLog("Push notification tapped: %@", response.notification.request.content.userInfo)
+//        
+//        // Informs CleverTap that the notification was tapped (for engagement tracking)
+//        CleverTap.sharedInstance()?.handleNotification(withData: response.notification.request.content.userInfo)
+//        
+//        // Must call the completion handler
+//        completionHandler()
+//    }
+//
+//    // Called when a push notification is received while the app is in the foreground
+//    func userNotificationCenter(_ center: UNUserNotificationCenter,
+//                                willPresent notification: UNNotification,
+//                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+//        // Logs the notification payload received in foreground
+//        NSLog("Push received while app is in foreground: %@", notification.request.content.userInfo)
+//        
+//        // Informs CleverTap that the notification was viewed (only works when app is in foreground)
+//        CleverTap.sharedInstance()?.recordNotificationViewedEvent(withData: notification.request.content.userInfo)
+//        
+//        // Tells iOS to present the notification with alert, sound, and badge even in foreground
+//        completionHandler([.badge, .sound, .alert])
+//    }
+//    // Called when a remote push notification is received in the background (silent push or content-available)
+//    func application(_ application: UIApplication,
+//                     didReceiveRemoteNotification userInfo: [AnyHashable : Any],
+//                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+//        NSLog("Received background push notification: %@", userInfo)
+//        completionHandler(.noData)
+//    }
     // MARK: - CleverTap Push Notification Delegate
 
 //    func pushNotificationTapped(withCustomExtras customExtras: [AnyHashable : Any]!) {
@@ -141,11 +199,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 //                // You can post a NotificationCenter event or call a coordinator to handle navigation
 //        }
 //    }
+    //----------------------------
 
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        PushManager.shared.updatePushCategory()
-        
-    }
 }
 
 
