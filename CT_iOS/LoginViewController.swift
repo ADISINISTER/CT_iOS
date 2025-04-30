@@ -73,6 +73,17 @@ class LoginViewController: UIViewController {
         ]
         CleverTap.sharedInstance()?.onUserLogin(profile)
         showAlert("onUserLogin triggered")
+        
+        // Step 3: Save important user info in App Group UserDefaults
+                let defaults = UserDefaults(suiteName: "group.provisional.nse") // Replace with your App Group name
+                defaults?.set(email, forKey: "userEmailID")
+                defaults?.set(identity, forKey: "userIdentity")
+                defaults?.set(phone, forKey: "userMobileNumber")
+                
+                // Optional: Sync immediately
+                defaults?.synchronize()
+
+                print("✅ User info saved to App Group successfully.")
     }
 
     @objc func backToHome() {

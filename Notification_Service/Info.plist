@@ -6,6 +6,8 @@
 	<string>TEST-9Z8-W9R-R47Z</string>
 	<key>CleverTapToken</key>
 	<string>TEST-2c0-b1c</string>
+    <key>CleverTapDisableIDFV</key>
+    <false/>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>

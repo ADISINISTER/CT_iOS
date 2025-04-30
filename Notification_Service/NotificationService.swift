@@ -82,9 +82,37 @@ class NotificationService: CTNotificationServiceExtension {
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.contentHandler = contentHandler
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
-        //Push Impression record
-        CleverTap.sharedInstance()?.recordNotificationViewedEvent(withData: request.content.userInfo)
-        super.didReceive(request, withContentHandler: contentHandler)
+        
+        // Setup CleverTap debug logs 
+               CleverTap.setDebugLevel(CleverTapLogLevel.debug.rawValue)
+        
+        // Fetch saved user profile from shared UserDefaults
+           let defaults = UserDefaults(suiteName: "group.provisional.nse") // Use your App Group name here
+           let emailId = defaults?.string(forKey: "userEmailID")
+           let userId = defaults?.string(forKey: "userIdentity")
+           let userMobNo = defaults?.string(forKey: "userMobileNumber")
+        
+        print("ℹ️ Retrieved from App Group - Email: \(emailId ?? "nil"), Identity: \(userId ?? "nil"), Mobile: \(userMobNo ?? "nil")")
+               
+               // If user data exists, login the user to CleverTap
+               if let emailId = emailId, let userId = userId, let userMobNo = userMobNo {
+                   let profile: [String: Any] = [
+                       "Identity": userId,
+                       "Email": emailId,
+                       "Phone": "+91" + userMobNo
+                   ]
+                   CleverTap.sharedInstance()?.onUserLogin(profile)
+                   print("✅ User login done in Notification Service Extension.")
+               } else {
+                   print("⚠️ No valid user info found in App Group. Skipping login.")
+               }
+               
+               //Record push notification viewed event
+               CleverTap.sharedInstance()?.recordNotificationViewedEvent(withData: request.content.userInfo)
+               
+               //Let CleverTap handle rich media push modifications
+               super.didReceive(request, withContentHandler: contentHandler)
+           }
         
 //        if let bestAttemptContent = bestAttemptContent {
 //            // Modify the notification content here...
@@ -102,4 +130,3 @@ class NotificationService: CTNotificationServiceExtension {
 //        }
 //    }
 
-}

@@ -942,6 +942,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 602E855A032B9C4BA987478E /* Pods-CT_iOS-Notification_Service.debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Notification_Service/Notification_Service.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = G9355AB4R7;
@@ -970,6 +971,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EE62BB536EC96B5B2FC30C17 /* Pods-CT_iOS-Notification_Service.release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Notification_Service/Notification_Service.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = G9355AB4R7;
